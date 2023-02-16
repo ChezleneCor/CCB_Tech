@@ -12,10 +12,9 @@ connection = sqlite3.connect("inventory.db")
 #Create cursor to do things in the database
 cursor = connection.cursor()
 
-#Create Table
-'''
+#Create Tables
 #Orders Table
-cursor.execute("""CREATE TABLE orders (
+cursor.execute("""CREATE TABLE IF NOT EXISTS orders (
     item_ID text,
     item_name text,
     item_quantity integer,
@@ -24,7 +23,7 @@ cursor.execute("""CREATE TABLE orders (
     )""")
 
 #Inventory Table
-cursor.execute("""CREATE TABLE inventory (
+cursor.execute("""CREATE TABLE IF NOT EXISTS inventory (
     item_ID text,
     item_name text,
     item_description text,
@@ -35,11 +34,11 @@ cursor.execute("""CREATE TABLE inventory (
     )""")
 
 #Login Table
-cursor.execute("""CREATE TABLE login (
+cursor.execute("""CREATE TABLE IF NOT EXISTS login (
     username text,
     password text,
     user_level int
-    )""")'''
+    )""")
 
 #Create Submit Function for Database
 def submit():
