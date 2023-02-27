@@ -40,6 +40,7 @@ class LoginPage(tk.Frame):
         #declaring global variables
         global username
         global password
+        global newUser
         
         #username label and textbox
         userLabel = Label(self, text = "Username").grid(row=0, column=0)
@@ -51,6 +52,10 @@ class LoginPage(tk.Frame):
         password = StringVar()
         usernameEntry = Entry(self, textvariable=password, show="*" ).grid(row=1, column=1)
         
+        #Add new user check box
+        newUser = StringVar()
+        new_user_btn = Checkbutton(self, variable=newUser, text="New User", onvalue="yes").grid(row=2, column=1)
+        
         #Login button
         loginButton = Button(self, text="Login", command=lambda: submit_login()).grid(row=4, column=0)
         
@@ -59,10 +64,27 @@ class LoginPage(tk.Frame):
             #pulling data from the form
             user = username.get()
             passw = password.get()
+            if_new_user = newUser.get()
+            
 
             #validating the data is not null
             if user == "" or passw == "":
                 tkinter.messagebox.showinfo("ERROR" , "The needed information has not been provided!")
+                
+            elif if_new_user == "yes":
+                #initialize database
+                connection = sqlite3.connect("logins.db")
+                
+                #checking if username is already in database
+                cursor = connection.execute('SELECT * from EMPLOYEE where USERNAME= "%s"'%(user,))
+                #get data
+                if cursor.fetchone():
+                    tkinter.messagebox.showinfo("ERROR", "This username is already in the system. Please login.")
+                
+                #calling new_user() function to add new user
+                else:
+                    new_user(user, passw)
+                
             else:
                 #initialize database
                 connection = sqlite3.connect("logins.db")
@@ -72,13 +94,14 @@ class LoginPage(tk.Frame):
                 if cursor.fetchone():
                     tkinter.messagebox.showinfo("Success", "Login Success")
                     controller.page_front('MainPage')
+                    
                 else:
                     tkinter.messagebox.showinfo("ERROR", "Wrong username or password.")
-        def new_user():
-        #Adding group members as test employees into database
-            connection.execute("INSERT INTO EMPLOYEE(USERNAME,PASSWORD) VALUES ('chezlenec', 'Password1')" );
-            connection.execute("INSERT INTO EMPLOYEE(USERNAME,PASSWORD) VALUES ('codyf', 'Password2')" );
-            connection.execute("INSERT INTO EMPLOYEE(USERNAME,PASSWORD) VALUES ('basharatt', 'Password3')" );
+                    
+        def new_user(user, passw):
+        #Adding new users to database
+            
+            connection.execute("INSERT INTO EMPLOYEE(USERNAME,PASSWORD) VALUES (?, ?)", (user, passw));
             
             connection.commit()
             print("New user updated")
