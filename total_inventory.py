@@ -1,8 +1,15 @@
 from tkinter import ttk
 import tkinter as tk
 import sqlite3
+from tkinter import *
 
 class Total_Inventory:
+    
+    def __init__(self, item_ID, item_name, total_quantity, sold_today, vendor_name):
+        self.item_ID = item_ID
+        self.item_name = item_name
+        self.total_quantity = total_quantity
+        self.vendor_name = vendor_name
 
     def connect():
             conn = sqlite3.connect('total_inventory.db')
@@ -28,7 +35,7 @@ class Total_Inventory:
             rows = cur.fetchall()    
             for row in rows:
                 print(row) 
-                tree.insert("", tk.END, values=row)
+                #tree.insert("", tk.END, values=row)
             conn.close()
             
     def search_item(item_name):
@@ -71,11 +78,11 @@ class Total_Inventory:
         else:
             print("Incomplete confirmation inventory data not deleted!")
 
-    def delete_item(item_name):
+    def delete_item(item_ID):
 
             conn = sqlite3.connect('total_inventory.db')
             cur = conn.cursor()
-            cur.execute("DELETE FROM total_inventory where item_name = ?",(item_name,))
+            cur.execute("DELETE FROM total_inventory where item_ID = ?",(item_ID,))
             conn.commit()
             conn.close()
             
@@ -86,32 +93,3 @@ class Total_Inventory:
             cur.execute("DELETE FROM total_inventory where vendor_name = ?",(vendor_name,))
             conn.commit()
             conn.close()
-
-        
-# connect to the database
-
-#table setting in tkinter
-
-Total_Inventory.connect()
-
-root = tk.Tk()
-tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4"), show='headings')
-
-tree.column("#1", anchor=tk.CENTER)
-tree.heading("#1", text="Item ID")
-
-tree.column("#2", anchor=tk.CENTER)
-tree.heading("#2", text="Item Name")
-
-tree.column("#3", anchor=tk.CENTER)
-tree.heading("#3", text="Total Quantity")
-
-tree.column("#4", anchor=tk.CENTER)
-tree.heading("#4", text="Vendor Name")
-
-
-tree.pack()
-button1 = tk.Button(text="Display all data", command=Total_Inventory.view)
-button1.pack(pady=10)
-
-root.mainloop()
