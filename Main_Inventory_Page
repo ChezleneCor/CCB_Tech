@@ -1,0 +1,88 @@
+from tkinter import ttk
+import tkinter as tk
+from tkinter import *
+import sqlite3
+from total_inventory import Total_Inventory
+
+# import messagebox from tkinter module
+import tkinter.messagebox
+
+
+#GUI settings
+#initialize tkinter window        
+root = Tk()
+#setting screen title
+root.title("Test")
+#setting height and width of screen 
+root.geometry("350x250")   
+
+
+
+#Search a single item from the total Inventory
+def search_item():
+    Mitem_name= input()
+#need a search field GUI here for Mitem_name
+    Total_Inventory.search_item(Mitem_name)
+#need a GUI which displays the information
+
+#Search by vendor from the total Inventory
+def search_vendor():
+    Mvendor_name= input()
+#need a search field GUI here for Mitem_name
+    Total_Inventory.search_vendor(Mvendor_name)
+#need a GUI which displays the information
+
+#add a new item manually to the total inventory database
+def add_itemsManually():
+    a_count = 0
+    add_items = input("How many different items do you want to add? ")
+    while a_count < int(add_items):
+        a_count += 1
+        print("For the "+ str(a_count) +" item" )
+        Mitem_ID = input("What is the item ID number ")
+        Mitem_name = input("What is the item name ")
+        Mtotal_quantity = input("How many quantites of "+ Mitem_name +" do you want to add ")
+        Mvendor_name = input("What is the vendor name ")
+        Total_Inventory.insert(Mitem_ID, Mitem_name, Mtotal_quantity, Mvendor_name)
+        print("Entry added:  "+ Mitem_ID + "  " + Mitem_name + "  " +str(Mtotal_quantity) + "  " +Mvendor_name)
+#GUI need a add items button here to start the process
+addButton = Button(root, text="Add a new entry", command=add_itemsManually).grid(row=4, column=0) 
+
+
+#delete an item here
+def del_item():
+    delete_ID = input("Please enter the the item unique ID that you want delete from the system" )
+    Total_Inventory.delete_item(delete_ID)
+    print(delete_ID +" item deleted")
+#GUI needs a delete item button here
+DeleteButton = Button(root, text="Delete a single entry", command=del_item).grid(row=8, column=0)
+
+#delete a vendor here
+#GUI needs a button here
+def del_vendor():
+    delete_vendor = input("Please enter the name of the vendor that needs to be deleted" )
+    Total_Inventory.delete_vendor(delete_vendor)
+    print(delete_vendor +" vendor deleted")
+#GUI needs a delete vendor button here
+Delete_V_Button = Button(root, text="Delete a vendor", command=del_vendor).grid(row=12, column=0)
+
+#delete the entire database
+#GUI big red button
+def del_all():
+    delete_all = input("Are you want to delete the entire database. Press Y for Yes or N for no" )
+    if delete_all == 'Y' or delete_all == 'y':
+        Total_Inventory.delete_all()
+    else:
+        print("Inventory not deleted")
+#GUI needs a delete all button here
+Delete_A_Button = Button(root, text="Delete ALL DATABASE", command=del_all).grid(row=16, column=0)
+
+
+#See the entire inventory
+def display():
+    Total_Inventory.display()
+#GUI button here
+DisplayButton = Button(root, text="Display the entire inventory", command=display).grid(row=20, column=0)
+
+
+root.mainloop()
