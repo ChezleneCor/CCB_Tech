@@ -117,7 +117,7 @@ class LoginPage(tk.Frame):
         def new_user(user, passw):
             #Adding new users to database
 
-            connection.execute("INSERT INTO login (username, password) VALUES (?, ?)", (user, passw))
+            connection.execute("INSERT INTO login (username, password, user_level) VALUES (?, ?, ?)", (user, passw, 0))
 
             connection.commit()
             print("New user updated")
@@ -129,7 +129,7 @@ class LoginPage(tk.Frame):
             cursor = connection.execute("SELECT * from login")
             print("ID\tUsername\tPassword\tUser Level")
             for row in cursor:
-                print("{}\t{}\t\t{}".format(row[0],row[1],row[2]))
+                print("{}\t{}\t{}\t{}".format(row[0],row[1],row[2], row[3]))
             connection.close()
         
 class MainPage(tk.Frame):
