@@ -57,7 +57,7 @@ class LoginPage(tk.Frame):
         new_user_btn = Checkbutton(self, variable=newUser, text="New User", onvalue="yes").grid(row=2, column=1)
         
         #Login button
-        loginButton = Button(self, text="Login", command=lambda: submit_login()).grid(row=4, column=0)
+        loginButton = Button(self, text="Submit", command=lambda: submit_login()).grid(row=4, column=0)
         
         def submit_login():
 
@@ -80,6 +80,7 @@ class LoginPage(tk.Frame):
                 #get data
                 if cursor.fetchone():
                     tkinter.messagebox.showinfo("ERROR", "This username is already in the system. Please login.")
+                    display_logins()
                 
                 #calling new_user() function to add new user
                 else:
@@ -95,13 +96,14 @@ class LoginPage(tk.Frame):
                     tkinter.messagebox.showinfo("Success", "Login Success")
                     controller.page_front('MainPage')
                     
+                    
                 else:
                     tkinter.messagebox.showinfo("ERROR", "Wrong username or password.")
                     
         def new_user(user, passw):
         #Adding new users to database
             
-            connection.execute("INSERT INTO EMPLOYEE(USERNAME,PASSWORD) VALUES (?, ?)", (user, passw));
+            connection.execute("INSERT INTO EMPLOYEE(USERNAME,PASSWORD) VALUES (?, ?)", (user, passw))
             
             connection.commit()
             print("New user updated")
@@ -135,8 +137,7 @@ class InventoryPage(tk.Frame):
         self.id = controller.id
         
         title = Label (self, text= "Inventory Page")
-        title.grid(row=0, column=0)       
-              
+        title.grid(row=0, column=0)                   
 
 class OrderPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -145,8 +146,7 @@ class OrderPage(tk.Frame):
         self.id = controller.id  
         
         title = Label (self, text= "Order Page")
-        title.grid(row=0, column=0)       
-      
+        title.grid(row=0, column=0)            
 
 #initialize database
 connection = sqlite3.connect("logins.db")
@@ -159,7 +159,6 @@ connection.execute("""
         PASSWORD TEXT NOT NULL)
                    """)
 print("Emplyee table initialized")
-
                
 if __name__ == '__main__':
     root = Mainframe()
@@ -168,7 +167,6 @@ if __name__ == '__main__':
     root.title("Test")
     #setting height and width of screen 
     root.geometry("700x500") 
-
     root.mainloop()      
 
 
