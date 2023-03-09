@@ -26,7 +26,7 @@ class Mainframe(tk.Tk):
         title_font = 'Futura'
         
         global title_color
-        title_color = "#F6F3AD"
+        title_color = "#003CFF"
         
         self.carousel = {}
         
@@ -161,7 +161,7 @@ class LoginPage(tk.Frame):
 
 
 #Author: Basharat Tunio
-#added: 3/5/2023
+#added: 3/8/2023
 #Description: Main page where we can manipulate inventory data
 class InventoryPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -208,27 +208,20 @@ class InventoryPage(tk.Frame):
 
         #Buttons only functions
 
-        DisplayButton = Button(self, text="Display the entire inventory", command=InventoryPage.display)
+        DisplayButton = Button(self, text="Display the entire inventory", command=lambda:InventoryPage.display())
         DisplayButton.grid(row=8, column=1, padx=10, pady=10)
 
         InsertButton = Button(self, text="Add an item", command=lambda:InventoryPage.insert())
         InsertButton.grid(row=10, column=1, padx=10, pady=10)
 
-        DeleteButton = Button(self, text="Delete an item", command=InventoryPage.delete)
+        DeleteButton = Button(self, text="Delete an item", command=lambda:InventoryPage.delete())
         DeleteButton.grid(row=12, column=1, padx=10, pady=10)
         
         
     # search functions
 
     def search_ID(item_ID):
-            conn = sqlite3.connect('inventory.db')
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM inventory where item_ID like ?",(item_ID,))
-            rows = cur.fetchall() 
-            for row in rows:
-                print(row) 
-            conn.close()
-
+            
             # Create a new Toplevel window to display the result of the search
             search_window = tk.Toplevel() 
             search_window.title("Search item ID results")
@@ -250,8 +243,25 @@ class InventoryPage(tk.Frame):
             vendor_name_header = tk.Label(search_frame, text="Vendor Name")
             vendor_name_header.grid(row=0, column=3, padx=10, pady=10)
 
+            conn = sqlite3.connect('inventory.db')
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM inventory where item_ID like ?",(item_ID,))
+            rows = cur.fetchall()
+
+            #error check
+            if cur.execute("SELECT * FROM inventory where item_ID like ?",(item_ID,)).fetchall() == []:
+                error_label = tk.Label(search_frame, text= "Error: " + item_ID + " not found")
+                error_label.grid(row=1, column=0, padx=10, pady=10)
+                return 
+            
+            for row in rows:
+                print(row) 
+            conn.close()
+
+
             # loop that displays the results
             for i, row in enumerate(rows):
+
                 item_ID_label = tk.Label(search_frame, text=row[0])
                 item_ID_label.grid(row=i+1, column=0, padx=10, pady=10)
 
@@ -265,13 +275,6 @@ class InventoryPage(tk.Frame):
                 vendor_name_label.grid(row=i+1, column=3, padx=10, pady=10)
             
     def search_item(item_name):
-            conn = sqlite3.connect('inventory.db')
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM inventory where item_name like ?",(item_name,))
-            rows = cur.fetchall() 
-            for row in rows:
-                print(row) 
-            conn.close()
 
             # Create a new Toplevel window to display the result of the search
             search_window = tk.Toplevel() 
@@ -294,6 +297,21 @@ class InventoryPage(tk.Frame):
             vendor_name_header = tk.Label(search_frame, text="Vendor Name")
             vendor_name_header.grid(row=0, column=3, padx=10, pady=10)
 
+            conn = sqlite3.connect('inventory.db')
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM inventory where item_name like ?",(item_name,))
+            rows = cur.fetchall()
+
+            #error check
+            if  cur.execute("SELECT * FROM inventory where item_name like ?",(item_name,)).fetchall() == []:
+                error_label = tk.Label(search_frame, text= "Error: " + item_name + " not found")
+                error_label.grid(row=1, column=1, padx=10, pady=10)
+                return 
+             
+            for row in rows:
+                print(row) 
+            conn.close()
+
             # Loop to display the results
             for i, row in enumerate(rows):
                 item_ID_label = tk.Label(search_frame, text=row[0])
@@ -309,14 +327,6 @@ class InventoryPage(tk.Frame):
                 vendor_name_label.grid(row=i+1, column=3, padx=10, pady=10)
             
     def search_vendor(vendor_name):
-            conn = sqlite3.connect('inventory.db')
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM inventory where vendor_name like ?",(vendor_name,))
-            rows = cur.fetchall() 
-            for row in rows:
-                print(row) 
-            conn.close()
-
 
             # Create a new Toplevel window to display the result of the search
             search_window = tk.Toplevel() 
@@ -339,6 +349,21 @@ class InventoryPage(tk.Frame):
             vendor_name_header = tk.Label(search_frame, text="Vendor Name")
             vendor_name_header.grid(row=0, column=3, padx=10, pady=10)
 
+            conn = sqlite3.connect('inventory.db')
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM inventory where vendor_name like ?",(vendor_name,))
+            rows = cur.fetchall() 
+
+            #error check
+            if  cur.execute("SELECT * FROM inventory where vendor_name like ?",(vendor_name,)).fetchall() == []:
+                error_label = tk.Label(search_frame, text= "Error: " + vendor_name + " not found")
+                error_label.grid(row=1, column=3, padx=10, pady=10)
+                return 
+            
+            for row in rows:
+                print(row) 
+            conn.close()
+
             # loop to display the results
             for i, row in enumerate(rows):
                 item_ID_label = tk.Label(search_frame, text=row[0])
@@ -357,7 +382,7 @@ class InventoryPage(tk.Frame):
     def display():
             conn = sqlite3.connect('inventory.db')
             cur = conn.cursor()
-            cur.execute("SELECT * FROM inventory ORDER BY ITEM_NAME")
+            cur.execute("SELECT * FROM inventory ORDER BY ITEM_QUANTITY")
             rows = cur.fetchall()    
             for row in rows:
                 print(row) 
@@ -444,14 +469,44 @@ class InventoryPage(tk.Frame):
             add_button.grid(row=10, column=2, padx=10, pady=10)
 
             #exit message
-            exit_message = tk.Label(insert_frame, text="Press x in the top left cornor to exit the add item window")
+            exit_message = tk.Label(insert_frame, text="Press x in the top left corner to exit the add item window")
             exit_message.grid(row= 14, column=0, padx=10, pady=10)
 
 
-
             def add(ID, name, quantity, vendor):
+                #error messages
+                if ID == '':
+                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item ID " + ID + " is not given")
+                    error_label.grid(row=12, column=0, padx=10, pady=10)
+                    return
+                
+                if name == '':
+                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item name " + name + " is not given")
+                    error_label.grid(row=12, column=0, padx=10, pady=10)
+                    return
+                
+                #error to check if the user actually input a number
+                while True:
+                    try:
+                        int(quantity)
+                        break
+                    except ValueError:
+                        error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item Quantity " + str(quantity) + " is not a valid number")
+                        error_label.grid(row=12, column=0, padx=10, pady=10)
+                        return
+
+                if int(quantity) < 0:
+                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item Quantity " + str(quantity) + " is not a valid number")
+                    error_label.grid(row=12, column=0, padx=10, pady=10)
+                    return
+                
+                if vendor == '':
+                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Vendor name " + vendor + " is not given")
+                    error_label.grid(row=12, column=0, padx=10, pady=10)
+                    return
+                
                 #confirmation message
-                confirm_label = tk.Label(insert_frame, text="Item ID:" + ID + "  Item Name: " + name + "  Item Quantity " +  str(quantity) + "  from Vendor:" + vendor + "  has been added in the system")
+                confirm_label = tk.Label(insert_frame, text="Item ID:" + ID + "  Item Name: " + name + "  Item Quantity " +  str(quantity) + "  from Vendor: " + vendor + "  has been added in the system")
                 confirm_label.grid(row=12, column=0, padx=10, pady=10)
 
 
@@ -460,7 +515,7 @@ class InventoryPage(tk.Frame):
                 cur = conn.cursor()
                 cur.execute("""INSERT INTO inventory(item_ID, item_name, item_quantity, vendor_name)
                             VALUES (?,?,?,?)
-                        """, (ID, name, quantity, vendor))
+                        """, (ID, name, int(quantity), vendor))
                 conn.commit()
                 conn.close()
 
@@ -493,6 +548,10 @@ class InventoryPage(tk.Frame):
         Delete_all_Button = tk.Button(delete_frame, text="Delete All Data", command=lambda: delete_all())
         Delete_all_Button.grid(row= 20, column=0, padx=10, pady=10)
 
+         #exit message
+        exit_message = tk.Label(delete_frame, text="Press x in the top left corner to exit the add item window")
+        exit_message.grid(row= 30, column=0, padx=10, pady=10)
+
         def delete_item_ID():
 
             #delete item ID field
@@ -506,15 +565,22 @@ class InventoryPage(tk.Frame):
 
             def delete_ID(item):
 
-                #confirmation message
-                confirm_label = tk.Label(delete_frame, text="Item ID: " + item + " has been deleted from the system")
-                confirm_label.grid(row=6, column=0, padx=10, pady=10)
-
                 conn = sqlite3.connect('inventory.db')
                 cur = conn.cursor()
+
+                #error check
+                if cur.execute("SELECT * FROM inventory where item_ID like ?",(item,)).fetchall() == []:
+                    error_label = tk.Label(delete_frame, text= "Error: " + item + " not found")
+                    error_label.grid(row=6, column=0, padx=10, pady=10)
+                    return 
+
                 cur.execute("DELETE FROM inventory where item_ID like ?",(item,))
                 conn.commit()
                 conn.close()
+
+                #confirmation message
+                confirm_label = tk.Label(delete_frame, text="Item ID: " + item + " has been deleted from the system")
+                confirm_label.grid(row=6, column=0, padx=10, pady=10)
 
         def delete_item():
 
@@ -528,16 +594,23 @@ class InventoryPage(tk.Frame):
             Delete_item_Button.grid(row= 10, column=2, padx=10, pady=10)
 
             def delete_name(name):
+            
+                conn = sqlite3.connect('inventory.db')
+                cur = conn.cursor()
+
+                #error check
+                if cur.execute("SELECT * FROM inventory where item_name like ?",(name,)).fetchall() == []:
+                    error_label = tk.Label(delete_frame, text= "Error: " + name + " not found")
+                    error_label.grid(row=12, column=0, padx=10, pady=10)
+                    return
+                
+                cur.execute("DELETE FROM inventory where item_name like ?",(name,))
+                conn.commit()
+                conn.close()
 
                 #confirmation message
                 confirm_label = tk.Label(delete_frame, text="Item ID: " + name + " has been deleted from the system")
                 confirm_label.grid(row=12, column=0, padx=10, pady=10)
-            
-                conn = sqlite3.connect('inventory.db')
-                cur = conn.cursor()
-                cur.execute("DELETE FROM inventory where item_name like ?",(name,))
-                conn.commit()
-                conn.close()
 
         def delete_vendor():
               
@@ -551,16 +624,23 @@ class InventoryPage(tk.Frame):
             Delete_item_Button.grid(row= 16, column=2, padx=10, pady=10)
 
             def delete_name(vendor):
+            
+                conn = sqlite3.connect('inventory.db')
+                cur = conn.cursor()
+
+                #error check
+                if cur.execute("SELECT * FROM inventory where vendor_name like ?",(vendor,)).fetchall() == []:
+                    error_label = tk.Label(delete_frame, text= "Error: " + vendor + " not found")
+                    error_label.grid(row=18, column=0, padx=10, pady=10)
+                    return
+                
+                cur.execute("DELETE FROM inventory where vendor_name like ?",(vendor,))
+                conn.commit()
+                conn.close()
 
                 #confirmation message
                 confirm_label = tk.Label(delete_frame, text="Vendor: " + vendor + " has been deleted from the system")
                 confirm_label.grid(row=18, column=0, padx=10, pady=10)
-            
-                conn = sqlite3.connect('inventory.db')
-                cur = conn.cursor()
-                cur.execute("DELETE FROM inventory where vendor_name like ?",(vendor,))
-                conn.commit()
-                conn.close()
 
         def delete_all():
 
@@ -594,7 +674,7 @@ class InventoryPage(tk.Frame):
                         cur = conn.cursor()
                         cur.execute('DELETE FROM inventory;',)
                         conn.commit()
-                        conn.close()    
+                        conn.close()        
 
 # Author: Cody Foerster
 # Added: 3/3/2023
@@ -1037,7 +1117,7 @@ if __name__ == '__main__':
     root = Mainframe()
         
     #setting screen title
-    root.title("Test")
+    root.title("Inventory System")
     #setting height and width of screen 
     root.geometry("700x500")
     
