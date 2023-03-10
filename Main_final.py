@@ -26,7 +26,7 @@ class Mainframe(tk.Tk):
         title_font = 'Futura'
         
         global title_color
-        title_color = "#003CFF"
+        title_color = "#F6F3AD"
         
         self.carousel = {}
         
@@ -161,7 +161,7 @@ class LoginPage(tk.Frame):
 
 
 #Author: Basharat Tunio
-#added: 3/8/2023
+#added: 3/5/2023
 #Description: Main page where we can manipulate inventory data
 class InventoryPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -382,7 +382,7 @@ class InventoryPage(tk.Frame):
     def display():
             conn = sqlite3.connect('inventory.db')
             cur = conn.cursor()
-            cur.execute("SELECT * FROM inventory ORDER BY ITEM_QUANTITY")
+            cur.execute("SELECT * FROM inventory ORDER BY ITEM_NAME")
             rows = cur.fetchall()    
             for row in rows:
                 print(row) 
@@ -469,7 +469,7 @@ class InventoryPage(tk.Frame):
             add_button.grid(row=10, column=2, padx=10, pady=10)
 
             #exit message
-            exit_message = tk.Label(insert_frame, text="Press x in the top left corner to exit the add item window")
+            exit_message = tk.Label(insert_frame, text="Press x in the top left cornor to exit the add item window")
             exit_message.grid(row= 14, column=0, padx=10, pady=10)
 
 
@@ -549,7 +549,7 @@ class InventoryPage(tk.Frame):
         Delete_all_Button.grid(row= 20, column=0, padx=10, pady=10)
 
          #exit message
-        exit_message = tk.Label(delete_frame, text="Press x in the top left corner to exit the add item window")
+        exit_message = tk.Label(delete_frame, text="Press x in the top left cornor to exit the add item window")
         exit_message.grid(row= 30, column=0, padx=10, pady=10)
 
         def delete_item_ID():
@@ -565,22 +565,15 @@ class InventoryPage(tk.Frame):
 
             def delete_ID(item):
 
-                conn = sqlite3.connect('inventory.db')
-                cur = conn.cursor()
-
-                #error check
-                if cur.execute("SELECT * FROM inventory where item_ID like ?",(item,)).fetchall() == []:
-                    error_label = tk.Label(delete_frame, text= "Error: " + item + " not found")
-                    error_label.grid(row=6, column=0, padx=10, pady=10)
-                    return 
-
-                cur.execute("DELETE FROM inventory where item_ID like ?",(item,))
-                conn.commit()
-                conn.close()
-
                 #confirmation message
                 confirm_label = tk.Label(delete_frame, text="Item ID: " + item + " has been deleted from the system")
                 confirm_label.grid(row=6, column=0, padx=10, pady=10)
+
+                conn = sqlite3.connect('inventory.db')
+                cur = conn.cursor()
+                cur.execute("DELETE FROM inventory where item_ID like ?",(item,))
+                conn.commit()
+                conn.close()
 
         def delete_item():
 
@@ -594,23 +587,16 @@ class InventoryPage(tk.Frame):
             Delete_item_Button.grid(row= 10, column=2, padx=10, pady=10)
 
             def delete_name(name):
-            
-                conn = sqlite3.connect('inventory.db')
-                cur = conn.cursor()
-
-                #error check
-                if cur.execute("SELECT * FROM inventory where item_name like ?",(name,)).fetchall() == []:
-                    error_label = tk.Label(delete_frame, text= "Error: " + name + " not found")
-                    error_label.grid(row=12, column=0, padx=10, pady=10)
-                    return
-                
-                cur.execute("DELETE FROM inventory where item_name like ?",(name,))
-                conn.commit()
-                conn.close()
 
                 #confirmation message
                 confirm_label = tk.Label(delete_frame, text="Item ID: " + name + " has been deleted from the system")
                 confirm_label.grid(row=12, column=0, padx=10, pady=10)
+            
+                conn = sqlite3.connect('inventory.db')
+                cur = conn.cursor()
+                cur.execute("DELETE FROM inventory where item_name like ?",(name,))
+                conn.commit()
+                conn.close()
 
         def delete_vendor():
               
@@ -624,23 +610,16 @@ class InventoryPage(tk.Frame):
             Delete_item_Button.grid(row= 16, column=2, padx=10, pady=10)
 
             def delete_name(vendor):
-            
-                conn = sqlite3.connect('inventory.db')
-                cur = conn.cursor()
-
-                #error check
-                if cur.execute("SELECT * FROM inventory where vendor_name like ?",(vendor,)).fetchall() == []:
-                    error_label = tk.Label(delete_frame, text= "Error: " + vendor + " not found")
-                    error_label.grid(row=18, column=0, padx=10, pady=10)
-                    return
-                
-                cur.execute("DELETE FROM inventory where vendor_name like ?",(vendor,))
-                conn.commit()
-                conn.close()
 
                 #confirmation message
                 confirm_label = tk.Label(delete_frame, text="Vendor: " + vendor + " has been deleted from the system")
                 confirm_label.grid(row=18, column=0, padx=10, pady=10)
+            
+                conn = sqlite3.connect('inventory.db')
+                cur = conn.cursor()
+                cur.execute("DELETE FROM inventory where vendor_name like ?",(vendor,))
+                conn.commit()
+                conn.close()
 
         def delete_all():
 
@@ -674,7 +653,7 @@ class InventoryPage(tk.Frame):
                         cur = conn.cursor()
                         cur.execute('DELETE FROM inventory;',)
                         conn.commit()
-                        conn.close()        
+                        conn.close()    
 
 # Author: Cody Foerster
 # Added: 3/3/2023
@@ -1117,7 +1096,7 @@ if __name__ == '__main__':
     root = Mainframe()
         
     #setting screen title
-    root.title("Inventory System")
+    root.title("Test")
     #setting height and width of screen 
     root.geometry("700x500")
     
