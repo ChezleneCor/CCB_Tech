@@ -518,16 +518,12 @@ class InventoryPage(tk.Frame):
                     return
                 
                 #confirmation message
-                confirm_label = tk.Label(insert_frame, text="Item ID:" + ID + "  Item Name: " + name + "  Item Quantity " +  str(quantity) + "  from Vendor: " + vendor + "  has been added in the system", fg='red')
+                confirm_label = tk.Label(insert_frame, text="Item ID: " + ID + "  Item Name: " + name + "  Item Quantity " +  str(quantity) + "  from Vendor: " + vendor + "  has been added in the system", fg='green')
                 confirm_label.grid(row=12, column=0, padx=10, pady=10)
-
-
 
                 conn = sqlite3.connect('inventory.db')
                 cur = conn.cursor()
-                cur.execute("""INSERT INTO inventory(item_ID, item_name, item_quantity, vendor_name)
-                            VALUES (?,?,?,?)
-                        """, (ID, name, int(quantity), vendor))
+                cur.execute("INSERT INTO inventory (item_ID, item_name, item_quantity, qoo, vendor_name) VALUES (?, ?, ?, ?, ?)", (ID, name, int(quantity), '0', vendor))
                 conn.commit()
                 conn.close()
 
@@ -597,7 +593,7 @@ class InventoryPage(tk.Frame):
                 conn.close()
 
                 #confirmation message
-                confirm_label = tk.Label(delete_frame, text="Item ID: " + item + " has been deleted from the system")
+                confirm_label = tk.Label(delete_frame, text="Item ID: " + item + " has been deleted from the system", fg ='green')
                 confirm_label.grid(row=6, column=0, padx=10, pady=10)
 
         def delete_item():
@@ -627,7 +623,7 @@ class InventoryPage(tk.Frame):
                 conn.close()
 
                 #confirmation message
-                confirm_label = tk.Label(delete_frame, text="Item ID: " + name + " has been deleted from the system")
+                confirm_label = tk.Label(delete_frame, text="Item ID: " + name + " has been deleted from the system", fg ='green')
                 confirm_label.grid(row=12, column=0, padx=10, pady=10)
 
         def delete_vendor():
@@ -657,7 +653,7 @@ class InventoryPage(tk.Frame):
                 conn.close()
 
                 #confirmation message
-                confirm_label = tk.Label(delete_frame, text="Vendor: " + vendor + " has been deleted from the system")
+                confirm_label = tk.Label(delete_frame, text="Vendor: " + vendor + " has been deleted from the system", fg ='green')
                 confirm_label.grid(row=18, column=0, padx=10, pady=10)
 
         def delete_all():
@@ -681,11 +677,11 @@ class InventoryPage(tk.Frame):
                     Delete_f_Button.grid(row=26, column=1, padx=10, pady=10)
                 
                 else:
-                    confirm_label = tk.Label(delete_frame, text="Incorrect Input")
+                    confirm_label = tk.Label(delete_frame, text="Incorrect Input", fg ='red')
                     confirm_label.grid(row=26, column=0, padx=10, pady=10)
 
                 def delete_F():
-                        confirm_label = tk.Label(delete_frame, text="All Inventory Data Erased")
+                        confirm_label = tk.Label(delete_frame, text="All Inventory Data Erased", fg ='green')
                         confirm_label.grid(row=28, column=0, padx=10, pady=10)
 
                         conn = sqlite3.connect('inventory.db')
