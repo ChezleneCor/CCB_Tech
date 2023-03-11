@@ -110,12 +110,7 @@ class LoginPage(tk.Frame):
 
         #Login button
         loginButton = Button(self, text="Login", command=lambda: submit_login()).grid(row=6, column=1)
-
-        #New user guide
-        guide = Label(self, text = "New users click the 'New User' check box and ensure that the box is checked and type your desired username and password and click the login button.", fg = "blue").grid(row=8 ,column=1)
-        guide2 = Label(self, text = "New users user level will be automatically set to 1. Your managers or supervisor can change your user level", fg = "blue").grid(row=9 ,column=1)
-        guide3 = Label(self, text = "Uncheck the 'New User' check box and type your username and password to login.", fg = "blue").grid(row=10 ,column=1)
-        guide4 = Label(self, text = "Professor use the username: feihongl and password: Pass5 to login as a user level 3.", fg = "purple").grid(row=12 ,column=1)
+        
         def submit_login():
 
             #pulling data from the form
@@ -271,7 +266,7 @@ class InventoryPage(tk.Frame):
 
             #error check
             if cur.execute("SELECT * FROM inventory where item_ID like ?",(item_ID,)).fetchall() == []:
-                error_label = tk.Label(search_frame, text= "Error: " + item_ID + " not found", fg='red')
+                error_label = tk.Label(search_frame, text= "Error: " + item_ID + " not found")
                 error_label.grid(row=1, column=0, padx=10, pady=10)
                 return 
             
@@ -325,7 +320,7 @@ class InventoryPage(tk.Frame):
 
             #error check
             if  cur.execute("SELECT * FROM inventory where item_name like ?",(item_name,)).fetchall() == []:
-                error_label = tk.Label(search_frame, text= "Error: " + item_name + " not found", fg='red')
+                error_label = tk.Label(search_frame, text= "Error: " + item_name + " not found")
                 error_label.grid(row=1, column=1, padx=10, pady=10)
                 return 
              
@@ -377,7 +372,7 @@ class InventoryPage(tk.Frame):
 
             #error check
             if  cur.execute("SELECT * FROM inventory where vendor_name like ?",(vendor_name,)).fetchall() == []:
-                error_label = tk.Label(search_frame, text= "Error: " + vendor_name + " not found", fg='red')
+                error_label = tk.Label(search_frame, text= "Error: " + vendor_name + " not found")
                 error_label.grid(row=1, column=3, padx=10, pady=10)
                 return 
             
@@ -447,12 +442,6 @@ class InventoryPage(tk.Frame):
     #Add item function
     def insert():
             
-            # Check if user is authorized to approve orders
-            user_level = InventoryPage.get_user_level(username.get())
-            if user_level < 2:
-                tkinter.messagebox.showerror("Unauthorized", "You are not authorized to add items in the system. Only Level 2 users or above!")
-                return
-            
             item_ID = StringVar()
             name = StringVar()
             quantity = IntVar()
@@ -495,16 +484,20 @@ class InventoryPage(tk.Frame):
             add_button = tk.Button(insert_frame, text="Add", command=lambda: add(item_ID_entry.get(), item_name_entry.get(), quantity_entry.get(), vendor_entry.get()))
             add_button.grid(row=10, column=2, padx=10, pady=10)
 
+            #exit message
+            exit_message = tk.Label(insert_frame, text="Press x in the top left corner to exit the add item window")
+            exit_message.grid(row= 14, column=0, padx=10, pady=10)
+
 
             def add(ID, name, quantity, vendor):
                 #error messages
                 if ID == '':
-                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item ID " + ID + " is not given", fg='red')
+                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item ID " + ID + " is not given")
                     error_label.grid(row=12, column=0, padx=10, pady=10)
                     return
                 
                 if name == '':
-                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item name " + name + " is not given", fg='red')
+                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item name " + name + " is not given")
                     error_label.grid(row=12, column=0, padx=10, pady=10)
                     return
                 
@@ -514,47 +507,36 @@ class InventoryPage(tk.Frame):
                         int(quantity)
                         break
                     except ValueError:
-                        error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item Quantity " + str(quantity) + " is not a valid number", fg='red')
+                        error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item Quantity " + str(quantity) + " is not a valid number")
                         error_label.grid(row=12, column=0, padx=10, pady=10)
                         return
 
                 if int(quantity) < 0:
-                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item Quantity " + str(quantity) + " is not a valid number", fg='red')
+                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Item Quantity " + str(quantity) + " is not a valid number")
                     error_label.grid(row=12, column=0, padx=10, pady=10)
                     return
                 
                 if vendor == '':
-                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Vendor name " + vendor + " is not given", fg='red')
+                    error_label = tk.Label(insert_frame, text= "Failed to add the item in the system database. Vendor name " + vendor + " is not given")
                     error_label.grid(row=12, column=0, padx=10, pady=10)
                     return
                 
                 #confirmation message
-                confirm_label = tk.Label(insert_frame, text="Item ID: " + ID + "  Item Name: " + name + "  Item Quantity " +  str(quantity) + "  from Vendor: " + vendor + "  has been added in the system", fg='green')
+                confirm_label = tk.Label(insert_frame, text="Item ID:" + ID + "  Item Name: " + name + "  Item Quantity " +  str(quantity) + "  from Vendor: " + vendor + "  has been added in the system")
                 confirm_label.grid(row=12, column=0, padx=10, pady=10)
+
+
 
                 conn = sqlite3.connect('inventory.db')
                 cur = conn.cursor()
-                cur.execute("INSERT INTO inventory (item_ID, item_name, item_quantity, qoo, vendor_name) VALUES (?, ?, ?, ?, ?)", (ID, name, int(quantity), '0', vendor))
+                cur.execute("""INSERT INTO inventory(item_ID, item_name, item_quantity, vendor_name)
+                            VALUES (?,?,?,?)
+                        """, (ID, name, int(quantity), vendor))
                 conn.commit()
                 conn.close()
 
-    def get_user_level(username):
-        # Get user level from the database
-        connection = sqlite3.connect("inventory.db")
-        cursor = connection.cursor()
-        cursor.execute("SELECT user_level FROM login WHERE username=?", (str(username),))
-        result = cursor.fetchone()
-        connection.close()
-        return result[0] if result else 0
-
     #delete item function
     def delete():
-
-        # Check if user is authorized to approve orders
-        user_level = InventoryPage.get_user_level(username.get())
-        if user_level < 2:
-            tkinter.messagebox.showerror("Unauthorized", "You are not authorized to delete items in the system. Only Level 2 users or above!")
-            return
         
         item_ID = StringVar()
         name = StringVar()
@@ -582,6 +564,9 @@ class InventoryPage(tk.Frame):
         Delete_all_Button = tk.Button(delete_frame, text="Delete All Data", command=lambda: delete_all())
         Delete_all_Button.grid(row= 20, column=0, padx=10, pady=10)
 
+         #exit message
+        exit_message = tk.Label(delete_frame, text="Press x in the top left corner to exit the add item window")
+        exit_message.grid(row= 30, column=0, padx=10, pady=10)
 
         def delete_item_ID():
 
@@ -601,7 +586,7 @@ class InventoryPage(tk.Frame):
 
                 #error check
                 if cur.execute("SELECT * FROM inventory where item_ID like ?",(item,)).fetchall() == []:
-                    error_label = tk.Label(delete_frame, text= "Error: " + item + " not found", fg='red')
+                    error_label = tk.Label(delete_frame, text= "Error: " + item + " not found")
                     error_label.grid(row=6, column=0, padx=10, pady=10)
                     return 
 
@@ -610,7 +595,7 @@ class InventoryPage(tk.Frame):
                 conn.close()
 
                 #confirmation message
-                confirm_label = tk.Label(delete_frame, text="Item ID: " + item + " has been deleted from the system", fg ='green')
+                confirm_label = tk.Label(delete_frame, text="Item ID: " + item + " has been deleted from the system")
                 confirm_label.grid(row=6, column=0, padx=10, pady=10)
 
         def delete_item():
@@ -631,7 +616,7 @@ class InventoryPage(tk.Frame):
 
                 #error check
                 if cur.execute("SELECT * FROM inventory where item_name like ?",(name,)).fetchall() == []:
-                    error_label = tk.Label(delete_frame, text= "Error: " + name + " not found", fg='red')
+                    error_label = tk.Label(delete_frame, text= "Error: " + name + " not found")
                     error_label.grid(row=12, column=0, padx=10, pady=10)
                     return
                 
@@ -640,7 +625,7 @@ class InventoryPage(tk.Frame):
                 conn.close()
 
                 #confirmation message
-                confirm_label = tk.Label(delete_frame, text="Item ID: " + name + " has been deleted from the system", fg ='green')
+                confirm_label = tk.Label(delete_frame, text="Item ID: " + name + " has been deleted from the system")
                 confirm_label.grid(row=12, column=0, padx=10, pady=10)
 
         def delete_vendor():
@@ -661,7 +646,7 @@ class InventoryPage(tk.Frame):
 
                 #error check
                 if cur.execute("SELECT * FROM inventory where vendor_name like ?",(vendor,)).fetchall() == []:
-                    error_label = tk.Label(delete_frame, text= "Error: " + vendor + " not found", fg='red')
+                    error_label = tk.Label(delete_frame, text= "Error: " + vendor + " not found")
                     error_label.grid(row=18, column=0, padx=10, pady=10)
                     return
                 
@@ -670,16 +655,10 @@ class InventoryPage(tk.Frame):
                 conn.close()
 
                 #confirmation message
-                confirm_label = tk.Label(delete_frame, text="Vendor: " + vendor + " has been deleted from the system", fg ='green')
+                confirm_label = tk.Label(delete_frame, text="Vendor: " + vendor + " has been deleted from the system")
                 confirm_label.grid(row=18, column=0, padx=10, pady=10)
 
         def delete_all():
-
-            # Check if user is authorized to approve orders
-            user_level = InventoryPage.get_user_level(username.get())
-            if user_level < 3:
-                tkinter.messagebox.showerror("Unauthorized", "You are not authorized to delete all data in the system. Only Level 3 users!")
-                return
 
             #confirmation message
             confirm_label = tk.Label(delete_frame, text="Are you sure. Type Y to confirm to delete all the data")
@@ -700,18 +679,18 @@ class InventoryPage(tk.Frame):
                     Delete_f_Button.grid(row=26, column=1, padx=10, pady=10)
                 
                 else:
-                    confirm_label = tk.Label(delete_frame, text="Incorrect Input", fg ='red')
+                    confirm_label = tk.Label(delete_frame, text="Incorrect Input")
                     confirm_label.grid(row=26, column=0, padx=10, pady=10)
 
                 def delete_F():
-                        confirm_label = tk.Label(delete_frame, text="All Inventory Data Erased", fg ='green')
+                        confirm_label = tk.Label(delete_frame, text="All Inventory Data Erased")
                         confirm_label.grid(row=28, column=0, padx=10, pady=10)
 
                         conn = sqlite3.connect('inventory.db')
                         cur = conn.cursor()
                         cur.execute('DELETE FROM inventory;',)
                         conn.commit()
-                        conn.close()       
+                        conn.close()        
 
 # Author: Cody Foerster
 # Added: 3/3/2023
