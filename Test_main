@@ -110,12 +110,7 @@ class LoginPage(tk.Frame):
 
         #Login button
         loginButton = Button(self, text="Login", command=lambda: submit_login()).grid(row=6, column=1)
-
-        #New user guide
-        guide = Label(self, text = "New users click the 'New User' check box and ensure that the box is checked and type your desired username and password and click the login button.", fg = "blue").grid(row=8 ,column=1)
-        guide2 = Label(self, text = "New users user level will be automatically set to 1. Your managers or supervisor can change your user level", fg = "blue").grid(row=9 ,column=1)
-        guide3 = Label(self, text = "Uncheck the 'New User' check box and type your username and password to login.", fg = "blue").grid(row=10 ,column=1)
-        guide4 = Label(self, text = "Professor use the username: feihongl and password: Pass5 to login as a user level 3.", fg = "purple").grid(row=12 ,column=1)
+        
         def submit_login():
 
             #pulling data from the form
@@ -447,12 +442,6 @@ class InventoryPage(tk.Frame):
     #Add item function
     def insert():
             
-            # Check if user is authorized to approve orders
-            user_level = InventoryPage.get_user_level(username.get())
-            if user_level < 2:
-                tkinter.messagebox.showerror("Unauthorized", "You are not authorized to add items in the system. Only Level 2 users or above!")
-                return
-            
             item_ID = StringVar()
             name = StringVar()
             quantity = IntVar()
@@ -549,12 +538,6 @@ class InventoryPage(tk.Frame):
 
     #delete item function
     def delete():
-
-        # Check if user is authorized to approve orders
-        user_level = InventoryPage.get_user_level(username.get())
-        if user_level < 2:
-            tkinter.messagebox.showerror("Unauthorized", "You are not authorized to delete items in the system. Only Level 2 users or above!")
-            return
         
         item_ID = StringVar()
         name = StringVar()
@@ -674,12 +657,6 @@ class InventoryPage(tk.Frame):
                 confirm_label.grid(row=18, column=0, padx=10, pady=10)
 
         def delete_all():
-
-            # Check if user is authorized to approve orders
-            user_level = InventoryPage.get_user_level(username.get())
-            if user_level < 3:
-                tkinter.messagebox.showerror("Unauthorized", "You are not authorized to delete all data in the system. Only Level 3 users!")
-                return
 
             #confirmation message
             confirm_label = tk.Label(delete_frame, text="Are you sure. Type Y to confirm to delete all the data")
